@@ -18,6 +18,7 @@
 		<module>UserService</module>
 		<module>RestaurantService</module>
 		<module>CommentService</module>
+		<module>AuthService</module>
 	</modules>
 
 	<packaging>pom</packaging>
