@@ -1,6 +1,8 @@
 package com.example.UserService.service.userUtils;
 
+import com.example.UserService.exceptions.CountryCodeException;
 import com.example.UserService.model.User;
+import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import org.springframework.stereotype.Component;
@@ -38,10 +40,11 @@ public class UserUtils {
 
             return new Telephone(totalTelephone, country);
 
-        } catch (Exception e) {
+        } catch (NumberParseException e) {
             e.printStackTrace();
+            throw new CountryCodeException("Invalid phone number");
         }
-        return null;
+
     }
 
     public boolean validateUser(User user) {
@@ -58,7 +61,7 @@ public class UserUtils {
             return validateSocietyFields(user);
 
         }   catch (Exception e) {
-            e.getStackTrace();
+//            e.getStackTrace();
         }
         return false;
 
@@ -90,10 +93,14 @@ public class UserUtils {
 
             String telephone = telephoneAndCode.getNumber();
             String country = telephoneAndCode.getCountry();
+            if(country == null){
+                throw new CountryCodeException("Invalid phone number");
+            }
 
             user.setTelephone(telephone);
             user.setCountry(country);
         }
+
     }
 
 

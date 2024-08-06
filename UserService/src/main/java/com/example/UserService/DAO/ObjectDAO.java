@@ -1,4 +1,4 @@
-package com.example.UserService.repository.DAO;
+package com.example.UserService.DAO;
 
 import java.util.List;
 import java.util.Optional;
