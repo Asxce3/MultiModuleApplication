@@ -1,4 +1,4 @@
-package com.example.CommentService.repository.DAO;
+package com.example.CommentService.DAO;
 
 
 import java.util.List;

@@ -1,11 +1,13 @@
 package com.example.RestaurantService.service;
 
+import com.example.RestaurantService.DAO.postgres.RestaurantDAOImpl;
+import com.example.RestaurantService.exceptions.RestaurantNotFoundException;
 import com.example.RestaurantService.model.Restaurant;
-import com.example.RestaurantService.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -13,30 +15,31 @@ import java.util.UUID;
 public class RestaurantService {
 
     @Autowired
-    private RestaurantRepository repository;
+    private RestaurantDAOImpl restaurantDAO;
 
-    public ResponseEntity<?> getRestaurants() {
-        return repository.getRestaurants();
+    public List<Restaurant> getRestaurants() {
+        return restaurantDAO.getMany();
     }
 
-    public ResponseEntity<?> getRestaurant(UUID id) {
-        return repository.getRestaurant(id);
+    public Restaurant getRestaurant(UUID id) {
+        Optional<Restaurant> restaurant = restaurantDAO.getOne(id);
+        if (restaurant.isEmpty()) {
+            throw new RestaurantNotFoundException("Restaurant not found");
+        }
+
+        return restaurant.get();
     }
 
-    public ResponseEntity<?> createRestaurant(Restaurant restaurant) {
-        return repository.createRestaurant(restaurant);
+    public void createRestaurant(Restaurant restaurant) {
+        restaurantDAO.create(restaurant);
     }
 
-    public ResponseEntity<?> updateRestaurant(UUID id, Restaurant restaurant) {
-        return repository.updateRestaurant(id, restaurant);
+    public void updateRestaurant(UUID id, Restaurant restaurant) {
+        restaurantDAO.update(id, restaurant);
     }
 
-    public ResponseEntity<?> deleteRestaurant(UUID id) {
-        return repository.deleteRestaurant(id);
+    public void deleteRestaurant(UUID id) {
+         restaurantDAO.delete(id);
     }
-
-
-
-
 
 }

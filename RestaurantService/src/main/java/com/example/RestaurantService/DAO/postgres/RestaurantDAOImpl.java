@@ -1,8 +1,7 @@
-package com.example.UserService.DAO.postgres;
+package com.example.RestaurantService.DAO.postgres;
 
-
-import com.example.UserService.exceptions.DaoException;
-import com.example.UserService.model.User;
+import com.example.RestaurantService.exceptions.DaoException;
+import com.example.RestaurantService.model.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,8 +10,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Repository
-public class UserDAOImpl {
+public class RestaurantDAOImpl {
 
     private final DaoUtils utils = new DaoUtils();
     // Локализация
@@ -29,39 +26,43 @@ public class UserDAOImpl {
     @Autowired
     private JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
+    public List<Restaurant> getMany() {
 
-    public List<User> getMany(){
+        String sql = "SELECT restaurant.id, restaurant.name, " +
+                        "restaurant_rating.rating, restaurant_rating.count_ratings " +
+                "FROM restaurant " +
+                "INNER JOIN restaurant_rating " +
+                "ON restaurant.id = restaurant_rating.restaurant_id";
         try {
-            return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(User.class));
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Restaurant.class));
 
         }   catch (DataAccessException e) {
                 throw new DaoException(errorMessage);
         }
     }
 
-    public Optional<User> getOne(UUID id) {
+
+    public Optional<Restaurant> getOne(UUID id)  {
+        String sql = "SELECT restaurant.id, restaurant.name, " +
+                "restaurant_rating.rating, restaurant_rating.count_ratings " +
+                "FROM restaurant " +
+                "INNER JOIN restaurant_rating " +
+                "ON restaurant.id = restaurant_rating.restaurant_id " +
+                "WHERE restaurant.id = ?";
+
         try {
-            return jdbcTemplate.query
-                    ("SELECT * FROM Person WHERE id = ?",
-                            new Object[]{id},
-                            new BeanPropertyRowMapper<>(User.class)
-                    ).stream().findAny();
+            return jdbcTemplate.query(sql, new Object[]{id}, new BeanPropertyRowMapper<>(Restaurant.class))
+            .stream().findFirst();
 
         }   catch (DataAccessException e) {
                 throw new DaoException(errorMessage);
         }
-
     }
 
-
-    public void create(User user) {
+    public void create(Restaurant restaurant) {
         try {
-            jdbcTemplate.update("INSERT INTO Person VALUES(gen_random_uuid(), ?, ?, ?, ?, ?)",
-                    user.getUsername(),
-                    user.getPassword(),
-                    user.getEmail(),
-                    user.getTelephone(),
-                    user.getCountry());
+            jdbcTemplate.update("INSERT INTO restaurant VALUES(gen_random_uuid(), ?)",
+                    restaurant.getName());
 
         }   catch (DuplicateKeyException e) {
                 Optional<String> key = utils.getKeyName(e.getMessage());
@@ -76,17 +77,12 @@ public class UserDAOImpl {
                 throw new DaoException(errorMessage);
         }
 
-
     }
 
-    public void update(UUID id, User user){
+    public void update(UUID id, Restaurant restaurant) {
         try {
-            jdbcTemplate.update("UPDATE Person SET email = ?, telephone = ?, country = ?" +
-                            " WHERE id = ?",
-                    user.getEmail(),
-                    user.getTelephone(),
-                    user.getCountry(),
-                    id);
+            jdbcTemplate.update("UPDATE restaurant SET name = ? WHERE id = ?",
+                    restaurant.getName(), id);
 
         }   catch (DuplicateKeyException e) {
                 Optional<String> key = utils.getKeyName(e.getMessage());
@@ -95,16 +91,16 @@ public class UserDAOImpl {
                 }
 
         }   catch (DataIntegrityViolationException e) {
-                throw new DataIntegrityViolationException("Сan only change your email and phone number");
+                throw new DataIntegrityViolationException("Сan only change your ......");
 
         }   catch (DataAccessException e) {
                 throw new DaoException(errorMessage);
         }
     }
 
-    public void delete(UUID id){
+    public void delete(UUID id) {
         try {
-            jdbcTemplate.update("DELETE FROM Person WHERE id = ?", id);
+            jdbcTemplate.update("DELETE FROM restaurant WHERE id = ?", id);
 
         }   catch (DataAccessException e) {
                 throw new DaoException(errorMessage);
@@ -115,7 +111,7 @@ public class UserDAOImpl {
 
 class DaoUtils {
 
-    public Optional<String> getKeyName(String message) {
+    public Optional<String> getKeyName(String message){
         String keyPattern = "Key \\(([^)]+)\\)=\\(([^)]+)\\)";
         Pattern pattern = Pattern.compile(keyPattern);
         Matcher matcher = pattern.matcher(message);
@@ -128,6 +124,3 @@ class DaoUtils {
     }
 
 }
-
-
-

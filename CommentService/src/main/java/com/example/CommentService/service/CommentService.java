@@ -1,48 +1,53 @@
 package com.example.CommentService.service;
 
+import com.example.CommentService.DAO.postgres.CommentDAOImpl;
+import com.example.CommentService.exceptions.CommentNotFoundException;
 import com.example.CommentService.model.Comment;
-import com.example.CommentService.repository.CommentRepository;
 import com.example.CommentService.service.commentUtils.CommentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
 public class CommentService {
 
     @Autowired
-    CommentRepository commentRepository;
+    CommentDAOImpl commentDAO;
 
     @Autowired
     CommentUtils commentUtils;
 
-    public ResponseEntity<?> getComments() {
-        return commentRepository.getComments();
+    public List<Comment> getComments() {
+        return commentDAO.getMany();
     }
 
-    public ResponseEntity<?> getComment(UUID id) {
-        return commentRepository.getComment(id);
-    }
+    public Comment getComment(UUID id) {
+        Optional<Comment> comment = commentDAO.getOne(id);
+        if(comment.isEmpty()) {
+            throw new CommentNotFoundException("Comment not found");
 
-    public ResponseEntity<?> createComment(Comment comment) {
-        if(commentUtils.checkScore(comment.getScore())) {
-            return commentRepository.createComment(comment);
         }
-        return ResponseEntity.badRequest().body("Данные введены не корректно");
-
+        return comment.get();
     }
 
-    public ResponseEntity<?> updateComment(UUID id, Comment comment) {
+    public void createComment(Comment comment) {
         if(commentUtils.checkScore(comment.getScore())) {
-            return commentRepository.updateComment(id, comment);
+            commentDAO.create(comment);
         }
-        return ResponseEntity.badRequest().body("Данные введены не корректно");
     }
 
-    public ResponseEntity<?> deleteComment(UUID id){
-        return commentRepository.deleteComment(id);
+    public void updateComment(UUID id, Comment comment) {
+        if( commentUtils.checkScore(comment.getScore())) {  // По отдельности добавляет только score. сообщение нет
+            commentDAO.update(id, comment);
+        }
+    }
+
+    public void deleteComment(UUID id){
+        commentDAO.delete(id);
     }
 
 }

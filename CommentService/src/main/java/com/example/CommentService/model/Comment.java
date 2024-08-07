@@ -61,6 +61,6 @@ public class Comment {
     }
 
     public String toString() {
-        return "\nComment id= " + id + "\npersonId= " + personId + "\nrestaurantId= " + restaurantId + "\ncomment= " + comment;
+        return "\nComment id= " + id + "\npersonId= " + personId + "\nrestaurantId= " + restaurantId + "\ncomment= " + comment + "\nscore= " + score;
     }
 }

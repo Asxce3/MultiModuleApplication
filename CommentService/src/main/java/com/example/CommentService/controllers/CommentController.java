@@ -3,9 +3,10 @@ package com.example.CommentService.controllers;
 import com.example.CommentService.model.Comment;
 import com.example.CommentService.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -17,27 +18,30 @@ public class CommentController {
 
 
     @GetMapping()
-    public ResponseEntity<?> getMany(){
+    public List<Comment> getMany(){
         return commentService.getComments();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOne(@PathVariable UUID id){
+    public Comment getOne(@PathVariable UUID id){
         return commentService.getComment(id);
     }
 
     @PostMapping()
-    public ResponseEntity<?> create(@RequestBody() Comment comment){
-        return commentService.createComment(comment);
+    @ResponseStatus(HttpStatus.CREATED)
+    public void create(@RequestBody() Comment comment){
+        commentService.createComment(comment);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable() UUID id, @RequestBody Comment comment) {
-        return commentService.updateComment(id, comment);
+    @ResponseStatus(HttpStatus.OK)
+    public void update(@PathVariable() UUID id, @RequestBody Comment comment) {
+        commentService.updateComment(id, comment);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable() UUID id ){
-        return commentService.deleteComment(id);
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable() UUID id ){
+        commentService.deleteComment(id);
     }
 }

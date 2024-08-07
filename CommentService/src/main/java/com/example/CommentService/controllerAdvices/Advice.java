@@ -1,9 +1,8 @@
-package com.example.UserService.controllerAdvices;
+package com.example.CommentService.controllerAdvices;
 
-import com.example.UserService.dto.Response;
-import com.example.UserService.exceptions.CountryCodeException;
-import com.example.UserService.exceptions.UserNotFoundException;
-import com.example.UserService.exceptions.DaoException;
+import com.example.CommentService.dto.Response;
+import com.example.CommentService.exceptions.CommentNotFoundException;
+import com.example.CommentService.exceptions.DaoException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -13,9 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class Advice {
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Response> userNotFoundException(UserNotFoundException e) {
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<Response> commentNotFoundException(CommentNotFoundException e) {
         Response response = new Response(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -37,12 +35,5 @@ public class Advice {
         Response response = new Response(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-
-    @ExceptionHandler(CountryCodeException.class)
-    public ResponseEntity<Response> dataIntegrityViolation(CountryCodeException e) {
-        Response response = new Response(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
 
 }

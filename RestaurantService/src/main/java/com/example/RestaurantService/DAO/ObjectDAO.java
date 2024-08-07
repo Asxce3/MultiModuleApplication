@@ -1,4 +1,4 @@
-package com.example.RestaurantService.repository.DAO;
+package com.example.RestaurantService.DAO;
 
 import java.util.List;
 import java.util.Optional;

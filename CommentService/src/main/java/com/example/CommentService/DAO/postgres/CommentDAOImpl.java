@@ -1,17 +1,15 @@
-package com.example.UserService.DAO.postgres;
+package com.example.CommentService.DAO.postgres;
 
-
-import com.example.UserService.exceptions.DaoException;
-import com.example.UserService.model.User;
+import com.example.CommentService.DAO.ObjectDAO;
+import com.example.CommentService.exceptions.DaoException;
+import com.example.CommentService.model.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-
-
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,49 +17,47 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Repository
-public class UserDAOImpl {
+@Component
+public class CommentDAOImpl implements ObjectDAO<Comment> {
 
     private final DaoUtils utils = new DaoUtils();
     // Локализация
     private final String errorMessage = "Something went wrong on server";
 
     @Autowired
-    private JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    JdbcTemplate jdbcTemplate;
 
-
-    public List<User> getMany(){
-        try {
-            return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(User.class));
-
-        }   catch (DataAccessException e) {
-                throw new DaoException(errorMessage);
-        }
-    }
-
-    public Optional<User> getOne(UUID id) {
+    @Override
+    public List<Comment> getMany() {
         try {
             return jdbcTemplate.query
-                    ("SELECT * FROM Person WHERE id = ?",
-                            new Object[]{id},
-                            new BeanPropertyRowMapper<>(User.class)
-                    ).stream().findAny();
-
+                    ("SELECT * FROM comment", new BeanPropertyRowMapper<>(Comment.class));
         }   catch (DataAccessException e) {
                 throw new DaoException(errorMessage);
         }
 
     }
 
-
-    public void create(User user) {
+    @Override
+    public Optional<Comment> getOne(UUID id) {
         try {
-            jdbcTemplate.update("INSERT INTO Person VALUES(gen_random_uuid(), ?, ?, ?, ?, ?)",
-                    user.getUsername(),
-                    user.getPassword(),
-                    user.getEmail(),
-                    user.getTelephone(),
-                    user.getCountry());
+            return jdbcTemplate.query
+                    ("SELECT * FROM comment WHERE id = ?",
+                            new Object[]{id},
+                            new BeanPropertyRowMapper<>(Comment.class)).stream().findAny();
+        }   catch (DataAccessException e) {
+                throw new DaoException(errorMessage);
+        }
+    }
+
+    @Override
+    public void create(Comment comment) {
+        try {
+            jdbcTemplate.update("INSERT INTO comment VALUES (gen_random_uuid(), ?, ?, ?, ?)",
+                    comment.getPersonId(),
+                    comment.getRestaurantId(),
+                    comment.getComment(),
+                    comment.getScore());
 
         }   catch (DuplicateKeyException e) {
                 Optional<String> key = utils.getKeyName(e.getMessage());
@@ -70,23 +66,20 @@ public class UserDAOImpl {
                 }
 
         }   catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
                 throw new DataIntegrityViolationException("Some fields is empty");
 
         }   catch (DataAccessException e) {
                 throw new DaoException(errorMessage);
         }
-
-
     }
 
-    public void update(UUID id, User user){
+    @Override
+    public void update(UUID id, Comment comment) {
         try {
-            jdbcTemplate.update("UPDATE Person SET email = ?, telephone = ?, country = ?" +
-                            " WHERE id = ?",
-                    user.getEmail(),
-                    user.getTelephone(),
-                    user.getCountry(),
-                    id);
+            jdbcTemplate.update("UPDATE comment SET comment = ?, score = ? WHERE id = ?",
+                    comment.getComment(),
+                    comment.getScore(), id);
 
         }   catch (DuplicateKeyException e) {
                 Optional<String> key = utils.getKeyName(e.getMessage());
@@ -95,21 +88,21 @@ public class UserDAOImpl {
                 }
 
         }   catch (DataIntegrityViolationException e) {
-                throw new DataIntegrityViolationException("Сan only change your email and phone number");
+                e.printStackTrace();
+                throw new DataIntegrityViolationException("Some fields is empty");
 
         }   catch (DataAccessException e) {
                 throw new DaoException(errorMessage);
         }
     }
 
-    public void delete(UUID id){
+    @Override
+    public void delete(UUID id) {
         try {
-            jdbcTemplate.update("DELETE FROM Person WHERE id = ?", id);
-
+            jdbcTemplate.update("DELETE FROM comment WHERE id = ?", id);
         }   catch (DataAccessException e) {
                 throw new DaoException(errorMessage);
         }
-
     }
 }
 
@@ -128,6 +121,3 @@ class DaoUtils {
     }
 
 }
-
-
-
