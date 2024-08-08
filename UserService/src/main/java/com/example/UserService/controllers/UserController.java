@@ -3,9 +3,12 @@ package com.example.UserService.controllers;
 import com.example.UserService.model.UserEdit;
 import com.example.UserService.service.UserService;
 import com.example.UserService.model.User;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -17,8 +20,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
     @GetMapping()
-    public List<User> getMany() {
+    public List<User> getMany(HttpServletRequest request){
+
         return userService.getUsers();
     }
 

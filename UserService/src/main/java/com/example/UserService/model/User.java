@@ -70,8 +70,8 @@ public class User {
     }
 
     public String toString() {
-        return "\nid : " + id + "\nusername : " + username + "\npassword : " + password
-                + "\nemail : " + email + "\ntelephone : " + telephone + "\ncountry : " + country;
+        return "id : " + id + " username : " + username + " password : " + password
+                + " email : " + email + " telephone : " + telephone + " country : " + country;
     }
 
 
