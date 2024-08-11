@@ -2,6 +2,7 @@ package org.example.authservice.controllerAdvices;
 
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import org.example.authservice.DTO.Response;
 import org.example.authservice.exceptions.DaoException;
 import org.example.authservice.exceptions.UserNotFoundException;
@@ -45,4 +46,6 @@ public class Advice {
         logger.error(logMessage, response.getMessage(), HttpStatus.UNAUTHORIZED);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
+
 }

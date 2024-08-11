@@ -1,6 +1,9 @@
 package org.example.authservice.models;
 
+import java.util.UUID;
+
 public class Candidate{
+    private UUID id;
     private String username;
     private String password;
 
@@ -25,4 +28,11 @@ public class Candidate{
     }
 
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 }
