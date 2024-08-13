@@ -1,8 +1,8 @@
 package com.example.UserService.DAO.postgres;
 
 
+import com.example.UserService.DTO.UserDTO;
 import com.example.UserService.exceptions.DaoException;
-import com.example.UserService.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,21 +30,21 @@ public class UserDAOImpl {
     private JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
 
-    public List<User> getMany(){
+    public List<UserDTO> getMany(){
         try {
-            return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(User.class));
+            return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(UserDTO.class));
 
         }   catch (DataAccessException e) {
                 throw new DaoException(errorMessage);
         }
     }
 
-    public Optional<User> getOne(UUID id) {
+    public Optional<UserDTO> getOne(UUID id) {
         try {
             return jdbcTemplate.query
                     ("SELECT * FROM Person WHERE id = ?",
                             new Object[]{id},
-                            new BeanPropertyRowMapper<>(User.class)
+                            new BeanPropertyRowMapper<>(UserDTO.class)
                     ).stream().findAny();
 
         }   catch (DataAccessException e) {
@@ -54,14 +54,14 @@ public class UserDAOImpl {
     }
 
 
-    public void create(User user) {
+    public void create(UserDTO dto) {
         try {
             jdbcTemplate.update("INSERT INTO Person VALUES(gen_random_uuid(), ?, ?, ?, ?, ?)",
-                    user.getUsername(),
-                    user.getPassword(),
-                    user.getEmail(),
-                    user.getTelephone(),
-                    user.getCountry());
+                    dto.getUsername(),
+                    dto.getPassword(),
+                    dto.getEmail(),
+                    dto.getTelephone(),
+                    dto.getCountry());
 
         }   catch (DuplicateKeyException e) {
                 Optional<String> key = utils.getKeyName(e.getMessage());
@@ -79,13 +79,13 @@ public class UserDAOImpl {
 
     }
 
-    public void update(UUID id, User user){
+    public void update(UUID id, UserDTO dto){
         try {
             jdbcTemplate.update("UPDATE Person SET email = ?, telephone = ?, country = ?" +
                             " WHERE id = ?",
-                    user.getEmail(),
-                    user.getTelephone(),
-                    user.getCountry(),
+                    dto.getEmail(),
+                    dto.getTelephone(),
+                    dto.getCountry(),
                     id);
 
         }   catch (DuplicateKeyException e) {

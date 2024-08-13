@@ -1,4 +1,4 @@
-package com.example.UserService.dto;
+package com.example.UserService.DTO;
 
 import java.time.Instant;
 

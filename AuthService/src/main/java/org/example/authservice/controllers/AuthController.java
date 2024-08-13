@@ -43,6 +43,7 @@ public class AuthController {
     public String refreshToken(@CookieValue(value = "refreshToken") String token, HttpServletResponse res) {
         String accessToken = service.refreshToken(token);
         Cookie cookie = new Cookie("accessToken", accessToken);
+
         cookie.setMaxAge(60);
         res.addCookie(cookie);
         res.setContentType("text/plain");

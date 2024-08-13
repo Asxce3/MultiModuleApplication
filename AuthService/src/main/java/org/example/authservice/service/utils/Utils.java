@@ -7,7 +7,6 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.example.authservice.models.Candidate;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -19,7 +18,6 @@ public class Utils {
 
         try {
             return JWT.create()
-//                    .withClaim("name", user.getUsername())
                     .withClaim("id", userId.toString())
                     .withExpiresAt(generateTime(timeToLife))
                     .sign(algorithm);
@@ -36,7 +34,6 @@ public class Utils {
                     .acceptLeeway(timeToLife)
                     .build();
             return verifier.verify(token);
-
 
         }   catch (TokenExpiredException e) {
             throw new JWTVerificationException("Token Invalid");

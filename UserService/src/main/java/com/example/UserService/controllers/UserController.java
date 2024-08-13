@@ -1,12 +1,13 @@
 package com.example.UserService.controllers;
 
-import com.example.UserService.model.UserEdit;
+import com.example.UserService.DTO.UserDTO;
+import com.example.UserService.DTO.transfer.New;
+import com.example.UserService.DTO.transfer.Update;
 import com.example.UserService.service.UserService;
-import com.example.UserService.model.User;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,26 +23,25 @@ public class UserController {
 
 
     @GetMapping()
-    public List<User> getMany(HttpServletRequest request){
-
+    public List<UserDTO> getMany(){
         return userService.getUsers();
     }
 
     @GetMapping("/{id}")
-    public User getOne(@PathVariable UUID id) {
+    public UserDTO getOne(@PathVariable UUID id) {
         return userService.getUser(id);
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody() User user ) {
-        userService.createUser(user);
+    public void create(@Validated(New.class) @RequestBody() UserDTO dto) {
+        userService.createUser(dto);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable UUID id, @RequestBody UserEdit user){
-        userService.updateUser(id, user);
+    public void update(@PathVariable UUID id, @Validated({Update.class}) @RequestBody UserDTO dto){
+        userService.updateUser(id, dto);
     }
 
     @DeleteMapping("/{id}")

@@ -1,6 +1,6 @@
 package com.example.UserService.controllerAdvices;
 
-import com.example.UserService.dto.Response;
+import com.example.UserService.DTO.Response;
 import com.example.UserService.exceptions.CountryCodeException;
 import com.example.UserService.exceptions.UserNotFoundException;
 import com.example.UserService.exceptions.DaoException;
