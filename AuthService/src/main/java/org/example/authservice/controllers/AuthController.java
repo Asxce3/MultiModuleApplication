@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 @RestController
 @RequestMapping()
@@ -18,36 +19,25 @@ public class AuthController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.OK)
-    public void createToken(@RequestBody Candidate candidate, HttpServletResponse res) {
-       HashMap<String,String> map = service.createToken(candidate);
-
-       Cookie cookie1 = new Cookie("accessToken", map.get("accessToken"));
-       Cookie cookie2 = new Cookie("refreshToken", map.get("refreshToken"));
-       cookie1.setMaxAge(60);
-       cookie2.setMaxAge(120);
-
-       res.addCookie(cookie1);
-       res.addCookie(cookie2);
-       res.setContentType("text/plain");
+    public void createToken(@RequestBody Candidate candidate, HttpServletResponse response) {
+        UUID userId = service.checkUser(candidate);
+        HashMap<String, String> tokens = service.createTokens(userId);
+        service.setCookieTokens(tokens, response);
 
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public void getCookie(@CookieValue(value = "accessToken") String token) {
+    public void verifyToken(@CookieValue(value = "accessToken") String token) {
         service.verifyToken(token);
     }
 
     @GetMapping("/refresh")
     @ResponseStatus(HttpStatus.OK)
-    public String refreshToken(@CookieValue(value = "refreshToken") String token, HttpServletResponse res) {
-        String accessToken = service.refreshToken(token);
-        Cookie cookie = new Cookie("accessToken", accessToken);
-
-        cookie.setMaxAge(60);
-        res.addCookie(cookie);
-        res.setContentType("text/plain");
-        return "Refresh Token success";
+    public void refreshToken(@CookieValue(value = "refreshToken") String refreshToken, HttpServletResponse response) {
+        UUID userId = service.changeTokens(refreshToken);
+        HashMap<String, String> tokens = service.createTokens(userId);
+        service.setCookieTokens(tokens, response);
 
     }
 }

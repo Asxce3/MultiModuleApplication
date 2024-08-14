@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ public class CandidateImpl {
         }
     }
 
-    public Optional<RefreshToken> checkRefreshToken(RefreshToken refreshToken) {
+    public Optional<RefreshToken> getRefreshToken(RefreshToken refreshToken) {
         try {
             return jdbcTemplate.query("SELECT * FROM refresh_token WHERE person_id = ?",
                             new Object[]{refreshToken.getPersonId()},
@@ -42,16 +43,22 @@ public class CandidateImpl {
         }
     }
 
+    @Transactional
     public void createRefreshToken(RefreshToken refreshToken) {
         try {
+            jdbcTemplate.update("DELETE FROM refresh_token WHERE person_id = ?", refreshToken.getPersonId());
             jdbcTemplate.update("INSERT INTO refresh_token VALUES (gen_random_uuid(), ?, ?)",
                     refreshToken.getPersonId(),
-                    refreshToken.getRefreshToken() );
+                    refreshToken.getToken());
 
         }   catch (DataAccessException e) {
             e.printStackTrace();
             throw new DaoException("Something went wrong on server");
         }
+    }
+
+    private void method() {
+        throw new RuntimeException();
     }
 
 

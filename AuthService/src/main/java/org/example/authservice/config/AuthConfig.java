@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 public class AuthConfig {
     private String key;
 
-
     public String getKey() {
         return key;
     }

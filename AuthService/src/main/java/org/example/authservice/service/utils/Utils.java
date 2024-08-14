@@ -14,6 +14,7 @@ import java.util.UUID;
 
 public class Utils {
 
+
     public String createJwt(Algorithm algorithm, UUID userId, long timeToLife) {
 
         try {

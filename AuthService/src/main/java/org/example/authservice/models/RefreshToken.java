@@ -5,7 +5,7 @@ import java.util.UUID;
 public class RefreshToken {
     private UUID id;
     private UUID personId;
-    private String refreshToken;
+    private String token;
 
     public UUID getId() {
         return id;
@@ -23,18 +23,18 @@ public class RefreshToken {
         this.personId = personId;
     }
 
-    public String getRefreshToken() {
-        return refreshToken;
+    public String getToken() {
+        return token;
     }
 
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public RefreshToken() {}
-    public RefreshToken(UUID personId, String refreshToken) {
+    public RefreshToken(UUID personId, String token) {
         this.personId = personId;
-        this.refreshToken = refreshToken;
+        this.token = token;
 
     }
 }
