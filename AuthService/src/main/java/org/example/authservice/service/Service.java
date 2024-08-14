@@ -24,20 +24,25 @@ import java.util.UUID;
 public class Service {
 
     @Autowired
-    AuthConfig authConfig;
-
-    @Autowired
     private CandidateImpl candidateImpl;
 
-    Utils utils = new Utils();
+    private final Utils utils = new Utils();
 
-    private Algorithm algorithm;
+    private final long ACCESS_TOKEN_LIFE_TIME = 1;  // 5 minute 180
 
-    private final long accessTokenLifetime = 1;  // 5 minute 180
+    private final long REFRESH_TOKEN_LIFE_TIME = 60;   // 3 month 3600 * 24 * 30
 
-    private final long refreshTokenLifetime = 60;   // 3 month 3600 * 24 * 30
+    private final HashMap<String, String> TOKENS = new HashMap<>();
 
-    private final HashMap<String, String> tokens = new HashMap<>();
+    private final Algorithm algorithm ;
+
+    public Service(AuthConfig authConfig) {
+        algorithm = Algorithm.HMAC256(authConfig.getKey());
+    }
+
+    public void verifyAccessToken(String token) {
+        utils.verifyToken(algorithm, token, ACCESS_TOKEN_LIFE_TIME);
+    }
 
     public UUID checkUser(Candidate candidate) {
         Optional<Candidate> optCandidate = candidateImpl.checkUser(candidate);
@@ -46,18 +51,11 @@ public class Service {
             throw new UserNotFoundException("User not found");
         }
 
-        algorithm = Algorithm.HMAC256(authConfig.getKey());
-
         return optCandidate.get().getId();
-
-    }
-
-    public void verifyToken(String token) {
-        utils.verifyToken(algorithm, token, accessTokenLifetime);
     }
 
     public UUID changeTokens(String token) {
-        DecodedJWT decodedJWT = utils.verifyToken(algorithm, token, refreshTokenLifetime);
+        DecodedJWT decodedJWT = utils.verifyToken(algorithm, token, REFRESH_TOKEN_LIFE_TIME);
 
         String id = decodedJWT.getClaim("id").asString();
         UUID userId = UUID.fromString(id);
@@ -69,10 +67,9 @@ public class Service {
         }
 
         return userId;
-
     }
 
-    public void setCookieTokens(HashMap<String, String> map, HttpServletResponse response){
+    public void setCookieTokens(HashMap<String, String> map, HttpServletResponse response) {
 
         Cookie cookie1 = new Cookie("accessToken", map.get("accessToken"));
         Cookie cookie2 = new Cookie("refreshToken", map.get("refreshToken"));
@@ -86,16 +83,15 @@ public class Service {
     }
 
     public HashMap<String, String> createTokens(UUID userId) {
-        String accessToken = utils.createJwt(algorithm, userId, accessTokenLifetime);
-        String refreshToken = utils.createJwt(algorithm, userId, refreshTokenLifetime);
+        String accessToken = utils.createJwt(algorithm, userId, ACCESS_TOKEN_LIFE_TIME);
+        String refreshToken = utils.createJwt(algorithm, userId, REFRESH_TOKEN_LIFE_TIME);
 
         candidateImpl.createRefreshToken(new RefreshToken(userId, refreshToken));
 
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-        return tokens;
+        TOKENS.put("accessToken", accessToken);
+        TOKENS.put("refreshToken", refreshToken);
+        return TOKENS;
     }
-
 
 
 }

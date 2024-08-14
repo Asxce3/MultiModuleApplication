@@ -8,7 +8,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.Optional;
 
@@ -19,14 +23,18 @@ public class CandidateImpl {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
     public Optional<Candidate> checkUser(Candidate candidate) {
         try {
             return jdbcTemplate.query("SELECT * FROM PERSON WHERE username = ? AND password = ?",
                             new Object[]{candidate.getUsername(), candidate.getPassword()},
-                            new BeanPropertyRowMapper<>(Candidate.class) {})
+                            new BeanPropertyRowMapper<>(Candidate.class) {
+                            })
                     .stream().findAny();
 
-        }   catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             throw new DaoException("Something went wrong on server");
         }
     }
@@ -35,10 +43,11 @@ public class CandidateImpl {
         try {
             return jdbcTemplate.query("SELECT * FROM refresh_token WHERE person_id = ?",
                             new Object[]{refreshToken.getPersonId()},
-                            new BeanPropertyRowMapper<>(RefreshToken.class) {})
+                            new BeanPropertyRowMapper<>(RefreshToken.class) {
+                            })
                     .stream().findAny();
 
-        }   catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             throw new DaoException("Something went wrong on server");
         }
     }
@@ -51,17 +60,17 @@ public class CandidateImpl {
                     refreshToken.getPersonId(),
                     refreshToken.getToken());
 
-        }   catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             e.printStackTrace();
             throw new DaoException("Something went wrong on server");
         }
     }
 
-    private void method() {
-        throw new RuntimeException();
-    }
-
 
 }
+
+
+
+
 
 

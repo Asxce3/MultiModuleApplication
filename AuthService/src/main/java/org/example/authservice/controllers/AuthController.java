@@ -29,7 +29,7 @@ public class AuthController {
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public void verifyToken(@CookieValue(value = "accessToken") String token) {
-        service.verifyToken(token);
+        service.verifyAccessToken(token);
     }
 
     @GetMapping("/refresh")

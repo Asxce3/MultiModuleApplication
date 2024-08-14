@@ -23,7 +23,7 @@ public class Utils {
                     .withExpiresAt(generateTime(timeToLife))
                     .sign(algorithm);
 
-        }   catch (JWTCreationException e) {
+        } catch (JWTCreationException e) {
             throw new JWTCreationException("JWT creation failed", e.getCause());
         }
     }
@@ -36,10 +36,9 @@ public class Utils {
                     .build();
             return verifier.verify(token);
 
-        }   catch (TokenExpiredException e) {
+        } catch (TokenExpiredException e) {
             throw new JWTVerificationException("Token Invalid");
-        }
-        catch (JWTVerificationException e) {
+        } catch (JWTVerificationException e) {
             throw new JWTVerificationException("JWT verification failed");
         }
     }
@@ -48,7 +47,6 @@ public class Utils {
     private Instant generateTime(long time) {
         return Instant.ofEpochSecond(Instant.now().getEpochSecond() + time);
     }
-
 
 
 }
