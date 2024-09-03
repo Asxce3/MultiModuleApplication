@@ -35,7 +35,8 @@ public class UserDAOImpl {
             return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(UserDTO.class));
 
         }   catch (DataAccessException e) {
-                throw new DaoException(errorMessage);
+            e.printStackTrace();
+            throw new DaoException(errorMessage);
         }
     }
 

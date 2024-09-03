@@ -34,7 +34,6 @@ public class HubUtils {
 
 
         } catch (MalformedURLException e) {
-            e.printStackTrace();
             return null;
         }
     }

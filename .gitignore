@@ -36,3 +36,11 @@ build/
 **/.DS_Store
 
 ### Hub and Services ###
+
+### .env ###
+
+**/.env
+
+### application.properties ###
+
+**/application.properties
