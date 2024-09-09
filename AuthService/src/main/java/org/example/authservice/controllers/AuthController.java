@@ -1,6 +1,5 @@
 package org.example.authservice.controllers;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.authservice.models.Candidate;
 import org.example.authservice.service.Service;
@@ -23,7 +22,6 @@ public class AuthController {
         UUID userId = service.checkUser(candidate);
         HashMap<String, String> tokens = service.createTokens(userId);
         service.setCookieTokens(tokens, response);
-
     }
 
     @GetMapping()
@@ -38,6 +36,5 @@ public class AuthController {
         UUID userId = service.changeTokens(refreshToken);
         HashMap<String, String> tokens = service.createTokens(userId);
         service.setCookieTokens(tokens, response);
-
     }
 }

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -46,6 +47,7 @@ public class Advice {
         logger.error(logMessage, response.getMessage(), HttpStatus.UNAUTHORIZED);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
 
 
 }

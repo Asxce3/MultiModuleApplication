@@ -66,31 +66,6 @@ public class CandidateImpl {
         }
     }
 
-//    public void createRefreshToken(RefreshToken refreshToken) {
-//        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-//        def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-//        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-//
-//        TransactionStatus status = transactionManager.getTransaction(def);
-//        try {
-//            jdbcTemplate.update("DELETE FROM refresh_token WHERE person_id = ?", refreshToken.getPersonId());
-//            jdbcTemplate.update("INSERT INTO refresh_token VALUES (gen_random_uuid(), ?, ?)",
-//                    refreshToken.getPersonId(),
-//                    refreshToken.getToken());
-//
-//            transactionManager.commit(status);
-//
-//        } catch (DataAccessException e) {
-//            transactionManager.rollback(status);
-//            throw new DaoException("Something went wrong on server");
-//        }
-//    }
-//
-//
-//    private void method() {
-//        throw new RuntimeException();
-//    }
-
 
 }
 

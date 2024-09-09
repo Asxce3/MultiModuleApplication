@@ -28,9 +28,9 @@ public class Service {
 
     private final Utils utils = new Utils();
 
-    private final long ACCESS_TOKEN_LIFE_TIME = 1;  // 5 minute 180
+    private final long ACCESS_TOKEN_LIFE_TIME = 60;  // 5 minute 180
 
-    private final long REFRESH_TOKEN_LIFE_TIME = 60;   // 3 month 3600 * 24 * 30
+    private final long REFRESH_TOKEN_LIFE_TIME = 120;   // 3 month 3600 * 24 * 30
 
     private final HashMap<String, String> TOKENS = new HashMap<>();
 
@@ -73,9 +73,6 @@ public class Service {
 
         Cookie cookie1 = new Cookie("accessToken", map.get("accessToken"));
         Cookie cookie2 = new Cookie("refreshToken", map.get("refreshToken"));
-
-        cookie1.setMaxAge(60);
-        cookie2.setMaxAge(120);
 
         response.addCookie(cookie1);
         response.addCookie(cookie2);
